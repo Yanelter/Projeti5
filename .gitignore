@@ -1,0 +1,10 @@
+# Ignorer les dépendances Node.js (c'est très lourd et inutile)
+node_modules/
+npm-debug.log
+
+# Ignorer les fichiers systèmes Mac/Windows
+.DS_Store
+Thumbs.db
+
+# Ignorer les variables d'environnement (sécurité)
+.env

@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # 1. La Base de Données (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: healthcheck_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: healthcheck_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306" # Tu pourras voir ta BDD via le port 3307
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql # Charge tes tables au démarrage
+
+  # 2. Le Backend (Node.js API)
+  backend:
+    build: ./backend
+    container_name: healthcheck_api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: healthcheck_db
+
+  # 3. Le Frontend (Ton site Web)
+  frontend:
+    build: ./frontend
+    container_name: healthcheck_web
+    ports:
+      - "8081:80" # Ton site sera accessible sur localhost:8080

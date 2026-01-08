@@ -1,0 +1,110 @@
+:root {
+    --sidebar-bg: #34495e;
+    --sidebar-btn: #2c3e50;
+    --primary: #4a69bd;
+    --bg-light: #ecf0f1;
+    --text-dark: #2c3e50;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
+body { background-color: #f5f6fa; height: 100vh; overflow: hidden; }
+
+/* Utilitaires */
+.hidden { display: none !important; }
+.active { display: flex !important; }
+
+/* === LOGIN SCREEN === */
+#login-screen {
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: #dfe6e9;
+}
+.login-container h2 { text-align: center; margin-bottom: 20px; color: var(--sidebar-bg); }
+.login-container span { color: red; }
+.login-box {
+    background: white; padding: 40px; width: 350px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 5px;
+}
+.login-box input {
+    width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 4px;
+}
+.login-box button {
+    width: 100%; padding: 10px; background: var(--primary); color: white; border: none; cursor: pointer;
+}
+
+/* === ADMIN LAYOUT === */
+#admin-interface { display: flex; height: 100vh; width: 100vw; }
+
+/* Sidebar */
+.sidebar {
+    width: 250px; background: var(--sidebar-bg); color: white;
+    display: flex; flex-direction: column; padding: 20px;
+}
+.logo { font-size: 24px; font-weight: bold; margin-bottom: 40px; text-align: center; }
+.logo span { color: red; }
+.menu-items { list-style: none; }
+.nav-btn {
+    width: 100%; background: #2c3e50; color: white; border: 1px solid #465a6e;
+    padding: 15px; text-align: left; margin-bottom: 10px; cursor: pointer; border-radius: 4px;
+}
+.nav-btn:hover { background: #3e5871; }
+
+/* Main Content */
+.main-content { flex: 1; padding: 20px; background: #ecf0f1; display: flex; flex-direction: column; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.user-profile { background: #bdc3c7; padding: 10px 20px; border-radius: 20px; }
+
+/* === DASHBOARD GRID === */
+.grid-2x2 {
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 20px; height: 100%;
+}
+.card { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.simple-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.simple-table th, .simple-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+.simple-table th { background-color: #f2f2f2; }
+.pie-chart-mockup { 
+    width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#2ecc71 0% 75%, #e74c3c 75% 100%); margin: 20px auto; 
+}
+
+/* === CONFIG PAGE (SPLIT SCREEN) === */
+.config-layout { display: flex; gap: 20px; height: 100%; }
+
+.config-panel { width: 300px; background: #dcdde1; padding: 20px; border-radius: 5px; display: flex; flex-direction: column; gap: 15px; }
+.map-panel { flex: 1; display: flex; flex-direction: column; background: white; padding: 10px; border-radius: 5px; }
+
+.form-group label { display: block; font-size: 0.9em; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+.btn-primary { background: #4a69bd; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+
+/* MAP CONTAINER (CRUCIAL POUR LES POINTS) */
+.map-container {
+    flex: 1; position: relative; background: #eee; overflow: hidden; cursor: crosshair; margin: 10px 0; border: 1px solid #ccc;
+}
+.map-img { width: 100%; height: 100%; object-fit: cover; } /* object-fit cover remplit la case */
+
+/* Les points sur la carte */
+.map-point {
+    position: absolute; width: 20px; height: 20px; 
+    transform: translate(-50%, -50%); /* Centre exact */
+    cursor: pointer; font-size: 20px;
+    text-shadow: 0 0 3px black; /* Pour voir l'étoile même sur fond blanc */
+}
+.map-point:hover { transform: translate(-50%, -50%) scale(1.2); }
+
+.legend-box { background: #fdfdfd; padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 20px; }
+.legend-item { font-size: 0.9em; display: flex; align-items: center; gap: 5px; }
+
+/* === MODAL === */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.modal-content { background: white; padding: 20px; width: 400px; border-radius: 8px; }
+.modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+.close-btn { cursor: pointer; font-size: 20px; font-weight: bold; }
+.modal-body .row { display: flex; gap: 10px; }
+.modal-body input, .modal-body select { margin-bottom: 10px; width: 100%; padding: 8px; border: 1px solid #ddd; }
+.modal-footer { text-align: center; margin-top: 15px; }
