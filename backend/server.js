@@ -51,17 +51,25 @@ app.get('/', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     
-    // Comparaison simple pour l'exercice (En vrai : utiliser bcrypt)
-    const sql = "SELECT * FROM users WHERE email = ? AND password_hash = ?";
+    // CORRECTION 1 : On cherche 'password' et non 'password_hash'
+    const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
     
     connection.query(sql, [email, password], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error(err); // Ajout pour voir l'erreur dans le terminal
+            return res.status(500).json({ error: err.message });
+        }
         
         if (results.length > 0) {
             const user = results[0];
             res.json({ 
                 success: true, 
-                user: { id: user.id, name: user.first_name, role: user.role } 
+                // CORRECTION 2 : On récupère 'firstname' (sans underscore) comme tu l'as créé
+                user: { 
+                    id: user.id, 
+                    name: user.firstname || user.first_name, // Sécurité : on tente les deux
+                    role: user.role 
+                } 
             });
         } else {
             res.status(401).json({ success: false, message: "Email ou mot de passe incorrect" });
@@ -71,19 +79,30 @@ app.post('/api/login', (req, res) => {
 
 // 3. GESTION UTILISATEURS (Liste)
 app.get('/api/users', (req, res) => {
-    connection.query("SELECT id, first_name, last_name, email, role FROM users", (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+    // CORRECTION : On demande 'firstname' et 'lastname' (sans underscore)
+    connection.query("SELECT id, firstname, lastname, email, role FROM users", (err, results) => {
+        if (err) {
+            console.error("Erreur lecture users:", err);
+            return res.status(500).json({ error: err.message });
+        }
         res.json(results);
     });
 });
 
-// 4. CRÉER UTILISATEUR
+// 4. CRÉER UTILISATEUR (CORRIGÉ)
 app.post('/api/users', (req, res) => {
+    // Le frontend envoie ces noms de variables (avec underscores)
     const { first_name, last_name, email, password, role } = req.body;
-    const sql = "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)";
+    
+    // CORRECTION : On insère dans les colonnes EXACTES de TA base de données
+    // (firstname, lastname, password => sans underscores ni suffixe _hash)
+    const sql = "INSERT INTO users (firstname, lastname, email, password, role) VALUES (?, ?, ?, ?, ?)";
     
     connection.query(sql, [first_name, last_name, email, password, role], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error("Erreur création user:", err); // Affiche l'erreur dans le terminal
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ success: true, id: result.insertId });
     });
 });

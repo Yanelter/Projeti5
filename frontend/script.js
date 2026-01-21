@@ -153,15 +153,18 @@ const app = {
             users.forEach(user => {
                 const tr = document.createElement('tr');
                 const badgeColor = user.role === 'ADMIN' ? '#e74c3c' : '#2ecc71'; 
+                
+                // CORRECTION ICI : On utilise ${user.firstname} et ${user.lastname}
                 tr.innerHTML = `
-                    <td>${user.first_name} ${user.last_name}</td>
+                    <td>${user.firstname} ${user.lastname}</td>
                     <td>${user.email}</td>
                     <td><span style="background:${badgeColor}; color:white; padding:4px 8px; border-radius:4px; font-size:0.8em;">${user.role}</span></td>
                     <td><button class="btn-secondary"><i class="fa fa-edit"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
-        });
+        })
+        .catch(err => console.error("Erreur chargement users", err));
     },
 
     // Fonctions Modales et Carte Admin
@@ -169,11 +172,31 @@ const app = {
     closeUserModal: function() { document.getElementById('modal-user').classList.add('hidden'); },
     
     createUser: function() {
-        // Code simplifié pour la création
-        alert("Utilisateur créé ! (Simulation rafraîchissement)");
-        this.closeUserModal();
-        this.loadUsers();
-    },
+    // 1. On récupère les valeurs
+    const firstname = document.getElementById('new_firstname').value;
+    const lastname = document.getElementById('new_lastname').value;
+    const email = document.getElementById('new_email').value;
+    const password = document.getElementById('new_password').value;
+    const role = document.getElementById('new_role').value;
+
+    // 2. On envoie au Backend
+    fetch('http://localhost:3000/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: firstname, last_name: lastname, email, password, role })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Utilisateur créé avec succès !"); // <--- LE NOUVEAU MESSAGE EST ICI
+            this.closeUserModal();
+            this.loadUsers();
+        } else {
+            alert("Erreur : " + JSON.stringify(data));
+        }
+    })
+    .catch(err => console.error(err));
+},
 
     addPoint: function(event) {
         if(event.target.closest('.map-point')) return;
@@ -214,19 +237,27 @@ const app = {
 
     renderOperatorMap: function() {
         const container = document.getElementById('operatorMapContainer');
-        const img = document.getElementById('operator-map-img');
-        container.innerHTML = ''; 
-        container.appendChild(img);
+        
+        // 1. NETTOYAGE : On enlève seulement les anciens points (s'il y en a)
+        // On ne touche PAS à l'image qui est déjà là grâce au HTML
+        const oldPoints = container.querySelectorAll('.map-point-op');
+        oldPoints.forEach(point => point.remove());
 
+        // 2. CRÉATION : On ajoute les nouveaux points
         this.currentInspectionData.points.forEach(point => {
-            const el = document.createElement('div');
-            el.className = `map-point-op status-${point.status}`; 
-            el.style.left = point.x + '%';
-            el.style.top = point.y + '%';
-            el.onclick = () => alert("Contrôle du point : " + point.label);
-            container.appendChild(el);
+             const el = document.createElement('div');
+             el.className = `map-point-op status-${point.status}`;
+             
+             // Positionnement (exactement comme pour l'admin)
+             el.style.left = point.x + '%';
+             el.style.top = point.y + '%';
+             
+             el.onclick = () => alert("Contrôle : " + point.label);
+             
+             container.appendChild(el);
         });
     },
+
 
     finishInspection: function() {
         alert("Ronde terminée !");

@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # 1. La Base de Données (MySQL)
@@ -26,8 +25,8 @@ services:
       - db
     environment:
       DB_HOST: db
-      DB_USER: user
-      DB_PASSWORD: password
+      DB_USER: root             # <-- Change 'user' en 'root'
+      DB_PASSWORD: rootpassword # <-- Change 'password' en 'rootpassword'
       DB_NAME: healthcheck_db
 
   # 3. Le Frontend (Ton site Web)
